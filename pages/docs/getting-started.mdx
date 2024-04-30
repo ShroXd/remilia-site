@@ -1,1 +1,80 @@
-here is the getting started page
+# Getting Started
+
+## Installation
+
+In your Golang project, run the following:
+
+```bash
+go get -u github.com/ShroXd/remilia
+```
+
+## Quick Start
+
+First, you need to create a Remilia instance with custom configurations. You can find all options at here.
+
+```go
+rem, _ := remilia.New(
+    remilia.WithClientOptions(
+        remilia.WithUserAgentGenerator(func() string {
+            return "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
+        }),
+    ),
+)
+```
+
+Second, you need to define a parser function to extract data from the HTML document.
+
+```go
+titleParser := func(doc *goquery.Document, put remilia.Put[string]) {
+    doc.Find(".WhyGo-reasonLearnMoreLink a").Each(func(_ int, s *goquery.Selection) {
+        // Custom data process logic
+        fmt.Println(s.Attr("href"))
+    })
+}
+```
+
+Finally, you can execute the web scraping task using the Remilia instance.
+
+```go
+err := rem.Do(
+    rem.Just("https://go.dev/"), // The URL to fetch
+    rem.Unit(titleParser),       // The parser function to use
+)
+if err != nil {
+    fmt.Println("Error during Remilia task:", err)
+}
+```
+
+## Connect!
+
+In a real web scraping application, you may need to get data from multiple pages. Remilia provides a way to connect multiple tasks together. Each task can be built singly, and you can pass the url to next level task by using `put` function. The following is an example to get the title of the details page of `go.dev` site.
+
+First, you need to define parsers for multiple level page.
+
+```go
+urlParser := func(doc *goquery.Document, put remilia.Put[string]) {
+    doc.Find(".WhyGo-reasonLearnMoreLink a").Each(func(_ int, s *goquery.Selection) {
+        route, ok := s.Attr("href")
+        if ok {
+            put("https://go.dev" + strings.TrimSuffix(route, "/"))
+        }
+    })
+}
+
+titleParser := func(doc *goquery.Document, put remilia.Put[string]) {
+    title := doc.Find("h1").First().Text()
+    fmt.Println("Title: ", string(title))
+}
+```
+
+Second, you can connect the tasks together.
+
+```go
+rem, _ := remilia.New()
+
+rem.Do(
+    rem.Just("https://go.dev/")
+    rem.Uint(urlParser)
+    rem.Uint(titleParser)
+)
+```

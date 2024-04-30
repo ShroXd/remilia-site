@@ -1,11 +1,40 @@
 # Introduction
 
-Welcome to Nextra! This is a basic docs template. You can use it as a starting point for your own project :)
+Remilia is a high-performance web scraping framework designed for efficiency.
 
-## What is Nextra?
+## Overview
 
-A **simple**, **powerful** and **flexible** site generation framework with everything you love from Next.js.
+```go
+func main() {
+	// Create a new instance of remilia
+	rem, err := remilia.New()
+	if err != nil {
+		fmt.Println("Error creating new remilia instance:", err)
+		return
+	}
 
-## Documentation
+	// Define the titleParser as a function to parse and print titles from a web page
+	titleParser := func(doc *goquery.Document, put remilia.Put[string]) {
+		doc.Find("h1").Each(func(_ int, s *goquery.Selection) {
+			fmt.Println(s.Text()) // Print each <h1> tag's text
+		})
+	}
 
-The documentation is available at [https://nextra.site](https://nextra.site).
+	// Execute the web scraping task using the remilia instance
+	err = rem.Do(
+		rem.Just("https://go.dev/"), // The URL to fetch
+		rem.Unit(titleParser),       // The parser function to use
+	)
+	if err != nil {
+		fmt.Println("Error during remilia task:", err)
+	}
+}
+
+```
+
+## Features
+
+- Clean API & elegant mental model
+- Concurrency supporting
+- Configurable backoff retry algorithm
+- Pre-request & post-response hooks supporting
