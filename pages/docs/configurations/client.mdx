@@ -1,0 +1,114 @@
+# Client Options
+
+When you create the `remilia` instance, you can pass some options via `WithClientOptions` to customize the behavior of the client.
+
+```go
+rem, _ := remilia.New(
+    remilia.WithClientOptions(
+        // put your options at here
+        remilia.WithBaseURL("https://api.example.com"),
+    ),
+)
+```
+
+For some configurations, we provide multiple ways to set. For example, you can set the basic auth by using `WithBasicAuth`, this allows you focus on your personal username and password. Or you can set it by using `WithHeaders`, this allows you add some logic and setup multiple header fields at the same time.
+
+Additionally, you can also pass hooks to change the `Request` or `Response` before they are sent or returned. You can also utilize it to setup the headers. This is useful when you want more refined control over the configuration of the request.
+
+## `WithBaseURL` 🚧
+
+You can set the base URL for the client. The base URL will be prepended to the request URL. (?)
+
+```go
+remilia.WithBaseURL("https://api.example.com"),
+```
+
+## `WithTimeout` 🚧
+
+You can set the timeout for the client. The timeout is the maximum amount of time a request is allowed to take. If the request takes longer than the timeout, the request will be canceled and an error will be returned.
+
+```go
+remilia.WithClientOptions(
+    remilia.WithTimeout(5 * time.Second),
+),
+```
+
+## `WithUserAgentGenerator`
+
+You can set the user agent generator for the client. The user agent generator is a function that generates the user agent for the client. The user agent will be sent with every request.
+
+By using this option, you can provide dynamic user agent for each request. If you don't need to change the user agent for each request, you can use `WithHeaders` option to set the static user agent.
+
+```go
+remilia.WithUserAgentGenerator(func() string {
+    return "My User Agent"
+}),
+```
+
+## `WithBasicAuth`
+
+You can set the basic auth for the client. The basic auth will be sent with every request.
+
+```go
+remilia.WithBasicAuth("username", "password"),
+```
+
+## `WithBearerAuth`
+
+You can set the bearer auth for the client. The bearer auth will be sent with every request.
+
+```go
+remilia.WithBearerAuth("token"),
+```
+
+## `WithApiKeyAuth`
+
+You can set the API key auth for the client. The API key auth will be sent with every request.
+
+```go
+remilia.WithApiKeyAuth("key"),
+```
+
+## `WithCookie`
+
+You can set the cookie for the client. The cookie will be sent with every request.
+
+```go
+remilia.WithCookie("cookie"),
+```
+
+## `WithHeaders`
+
+You can set the static headers for the client. These headers will be sent with every request.
+
+```go
+remilia.WithHeaders(map[string]string{
+    "Authorization": "Bearer token",
+}),
+```
+
+## `WithPreRequestHooks`
+
+You can add several hooks to be executed before the request is sent. These hooks can be used to modify the request before it is sent. If you change the same field of `Request` in multiple hooks, the later hook will have high priority.
+
+```go
+remilia.WithPreRequestHooks(func(req *remilia.Request) error {
+    // modify the request
+    return nil
+}),
+```
+
+TODO: list files which can be changed
+
+## `WithPostResponseHooks`
+
+You can add several hooks to be executed after the response is received. These hooks can be used to modify the response before it is returned to the caller. If you change the same field of `Response` in multiple hooks, the later hook will have high priority.
+
+```go
+remilia.WithPostResponseHooks(func(req *remilia.Response) error {
+    // modify the response
+    return nil
+}),
+```
+
+TODO: list files which can be changed

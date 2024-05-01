@@ -1,0 +1,83 @@
+# Exponential Backoff Retry Options
+
+In the real world, the network request may fail due to various reasons, such as network issues, server issues, etc. To handle these issues, we support the exponential backoff retry mechanism. You can customize the it via passing options to `WithClientOptions`.
+
+```go
+rem, _ := remilia.New(
+    remilia.WithClientOptions(
+        // put your options at here
+        remilia.WithRequestMinimumDelay(5*time.Second),
+    ),
+)
+```
+
+The following is the fomular to calculate the dalay. The delay will increase exponentially with each retry.
+
+$$
+delay = \min(maxDelay, minDelay \times multiplier^{attempt}) + randomDelay
+$$
+
+The following is the table of the delay for each attempt. The minimum delay is 1 second, the multiplier is 2.0, and the random delay is discarded to make it clear.
+
+| attempt | result (seconds) |
+| ------- | ---------------- |
+| 1       | 1.0              |
+| 2       | 4.0              |
+| 3       | 9.0              |
+| 4       | 16.0             |
+| 5       | 25.0             |
+| 6       | 36.0             |
+| 7       | 49.0             |
+| 8       | 64.0             |
+| 9       | 81.0             |
+| 10      | 100.0            |
+
+## `WithMinDelay`
+
+You can set the minimum delay for the client. The minimum delay is the minimum amount of time to wait before retrying a request. The delay will increase exponentially with each retry.
+
+The default value is `1 * time.Second`.
+
+```go
+remilia.WithMinDelay(5*time.Second),
+```
+
+## `WithMaxDelay`
+
+You can set the maximum delay for the client. The maximum delay is the maximum amount of time to wait before retrying a request. The delay will increase exponentially with each retry.
+
+The default value is `50 * time.Second`.
+
+```go
+remilia.WithMaxDelay(100*time.Second)
+```
+
+## `WithMultiplier`
+
+You can set the multiplier for the client. The multiplier is the factor by which the delay will increase with each retry.
+
+The default value is `2.0`.
+
+```go
+remilia.WithMultiplier(3.0)
+```
+
+## `WithMaxAttempt`
+
+You can set the maximum attempt for the client. The maximum attempt is the maximum number of times to retry a request.
+
+The default value is `10`.
+
+```go
+remilia.WithMaxAttempt(20)
+```
+
+## `WithLinearAttempt` 🚧
+
+You can set the linear attempt for the client. Linear attempts indicate how many attempts the client has made to change exponential growth to linear growth
+
+The default value is `5`
+
+```go
+remilia.WithLinearAttempt(10)
+```
