@@ -24,6 +24,8 @@ rem, _ := remilia.New(
 
 Second, you need to define a parser function to extract data from the HTML document.
 
+The parser function will be called by Remilia with the encapsulated HTML document and a `put` function. You can extract data from document by using the API of [goquery](https://github.com/PuerkitoBio/goquery). The `put` function is used to pass the url to the next level of the task (if any exists), we will discussed it later.
+
 ```go
 titleParser := func(doc *goquery.Document, put remilia.Put[string]) {
     doc.Find(".WhyGo-reasonLearnMoreLink a").Each(func(_ int, s *goquery.Selection) {
@@ -33,7 +35,7 @@ titleParser := func(doc *goquery.Document, put remilia.Put[string]) {
 }
 ```
 
-Finally, you can execute the web scraping task using the Remilia instance.
+Finally, you can execute the web scraping task using the Remilia instance. The `Just` function is used to specify the URL to fetch, and the `Unit` function is used to specify the parser function.
 
 ```go
 err := rem.Do(
@@ -49,7 +51,7 @@ if err != nil {
 
 In a real web scraping application, you may need to get data from multiple pages. Remilia provides a way to connect multiple tasks together. Each task can be built singly, and you can pass the url to next level task by using `put` function. The following is an example to get the title of the details page of `go.dev` site.
 
-First, you need to define parsers for multiple level page.
+First, you need to define parsers for multiple level page. The first parser is used to extract the URL of the details page, and the second parser is used to extract the title of the details page.
 
 ```go
 urlParser := func(doc *goquery.Document, put remilia.Put[string]) {
@@ -67,14 +69,15 @@ titleParser := func(doc *goquery.Document, put remilia.Put[string]) {
 }
 ```
 
-Second, you can connect the tasks together.
+Second, you can connect the tasks together and run it. You can pass multiple parser tasks to the `Do` function.
 
 ```go
 rem, _ := remilia.New()
-
 rem.Do(
     rem.Just("https://go.dev/")
     rem.Uint(urlParser)
     rem.Uint(titleParser)
 )
 ```
+
+Based on this pattern, you can build a complex web scraping task with multiple levels of pages. The work at each level is independent, and you can easily extend the task by adding more levels of parsers.
