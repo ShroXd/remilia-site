@@ -1,1 +1,11 @@
 # Understand Remilia
+
+In the actually webiste, the information that needs to be extracted does not necessarily exist on the same page. Therfore, if we want to develop a web scraper or crawler, we need to develop multiple parsers for different kinds of page, the responsiblity of framework is orgranize these parsers and call them in the right order.
+
+![Multiple parsers](/img/understand-remilia/multiple-parsers.png)
+
+In Golang, we can easily develop a pipeline consist of multiple parsers by using `chan` and `goroutine`. At each level of unit of the pipeline, we can use Fan-out/Fan-in pattern to distribute the work and collect the result. Between each level, we can use `chan` to connect them.
+
+By adjusting the number of goroutines and capacity of channels, we can control the speed of the pipeline and the memory usage.
+
+![Pipeline](/img/understand-remilia/pipeline.png)
