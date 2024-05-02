@@ -1,5 +1,6 @@
 {
   "client": "Client Options",
+  "unit": "Unit Options",
   "eb": "Exponential Backoff Retry Options",
-  "unit": "Unit Options"
+  "logger": "Logger Options 🚧"
 }

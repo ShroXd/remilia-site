@@ -28,9 +28,7 @@ remilia.WithBaseURL("https://api.example.com"),
 You can set the timeout for the client. The timeout is the maximum amount of time a request is allowed to take. If the request takes longer than the timeout, the request will be canceled and an error will be returned.
 
 ```go
-remilia.WithClientOptions(
-    remilia.WithTimeout(5 * time.Second),
-),
+remilia.WithTimeout(5 * time.Second),
 ```
 
 ## `WithUserAgentGenerator`

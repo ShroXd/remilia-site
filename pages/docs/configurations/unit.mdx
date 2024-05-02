@@ -1,1 +1,32 @@
-Here is the unit options page
+# Unit Options
+
+When you create the `remilia` instance, you can pass some options via `WithUnitOptions` to customize the behavior of the unit.
+
+```go
+rem, _ := remilia.New(
+    remilia.WithUnitOptions(
+        // put your options at here
+        remilia.WithConcurrency(10),
+    ),
+)
+```
+
+## `WithConcurrency`
+
+You can set the concurrency for the unit. The concurrency is the maximum number of goroutines that can be run at the same time.
+
+The default value is `1`.
+
+```go
+remilia.WithConcurrency(10),
+```
+
+## `WithInputBufferSize`
+
+You can set the input buffer size for the unit. The input buffer size is the maximum number of input messages that can be stored in the input channel.
+
+The default value is `0`.
+
+```go
+remilia.WithInputBufferSize(100)
+```

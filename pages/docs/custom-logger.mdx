@@ -1,0 +1,33 @@
+# Custom Logger 🚧
+
+import { Callout } from "nextra/components";
+
+Log is an important part of any application. In Remilia, we utilize [zap](https://github.com/uber-go/zap) to provide a fast, structured, leveled logging. However, you can replace the default logger with your own logger.
+
+<Callout emoji="🍰️">
+  In most cases, a custom logging configuration is probably a better choice.
+</Callout>
+
+You can provide your logger by using the `WithLogger` option. The logger must implement the `remilia.Logger` interface.
+
+```go
+rem, _ := remilia.New(
+    remilia.WithLogger(&MyLogger{}),
+)
+```
+
+## Logger Interface
+
+The `remilia.Logger` interface is a simple interface that has three methods: `Debug`, `Info`, `Warn`, `Error` and `Panic`.
+
+```go
+type logContext map[string]interface{}
+
+type Logger interface {
+	Debug(msg string, context ...logContext)
+	Info(msg string, context ...logContext)
+	Warn(msg string, context ...logContext)
+	Error(msg string, context ...logContext)
+	Panic(msg string, context ...logContext)
+}
+```
